@@ -1,15 +1,15 @@
 Summary:	A tree-sitter parser for tree-sitter query files
 Name:		tree-sitter-query
-Version:	0.4.0
+Version:	0.5.1
 Release:	1
 License:	MIT
 Group:		Libraries
 Source0:	https://github.com/tree-sitter-grammars/tree-sitter-query/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	7181d19e0b01420f33ec67584246a47c
+# Source0-md5:	03a4e0e559587ab4e2af245fa44c7a35
 URL:		https://github.com/tree-sitter-grammars/tree-sitter-query
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		ts_query_soname	libtree-sitter-query.so.0
+%define		ts_query_soname	libtree-sitter-query.so.14.0
 
 %description
 A tree-sitter query file parser for tree-sitter.
@@ -63,6 +63,8 @@ install -d $RPM_BUILD_ROOT%{_libdir}/nvim/parser
 	LIBDIR="%{_libdir}" \
 	PCLIBDIR="%{_pkgconfigdir}"
 
+%{__ln_s} -f %{_libdir}/%{ts_query_soname} $RPM_BUILD_ROOT%{_libdir}/libtree-sitter-query.so
+
 %{__ln_s} %{_libdir}/%{ts_query_soname} $RPM_BUILD_ROOT%{_libdir}/nvim/parser/query.so
 
 %clean
@@ -74,8 +76,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc LICENSE README.md
-%attr(755,root,root) %{_libdir}/libtree-sitter-query.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/%{ts_query_soname}
+%attr(755,root,root) %{_libdir}/%{ts_query_soname}
 
 %files devel
 %defattr(644,root,root,755)
