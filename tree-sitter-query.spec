@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_without	python3	# Python 3.x binding
+
 Summary:	A tree-sitter parser for tree-sitter query files
 Summary(pl.UTF-8):	Analizator składniowy tree-sittera do plików zapytań tree-sittera
 Name:		tree-sitter-query
@@ -11,6 +15,11 @@ Source0:	https://github.com/tree-sitter-grammars/tree-sitter-query/archive/v%{ve
 URL:		https://github.com/tree-sitter-grammars/tree-sitter-query
 # c11
 BuildRequires:	gcc >= 6:4.7
+%if %{with python3}
+BuildRequires:	python3-devel >= 1:3.10
+BuildRequires:	python3-setuptools
+BuildRequires:	python3-wheel
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		soname_ver	15.0
@@ -57,6 +66,18 @@ tree-sitter query file parser for Neovim.
 %description -n neovim-parser-query -l pl.UTF-8
 Analizator składniowy plików zapytań tree-sittera dla Neovima.
 
+%package -n python3-tree-sitter-query
+Summary:	Tree-sitter query files parser for Python
+Summary(pl.UTF-8):	Analizator składni plików zapytań tree-sittera dla Pythona
+Group:		Libraries/Python
+Requires:	python3-tree-sitter >= 0.24
+
+%description -n python3-tree-sitter-query
+Tree-sitter query files parser for Python.
+
+%description -n python3-tree-sitter-query -l pl.UTF-8
+Analizator składni plików zapytań tree-sittera dla Pythona.
+
 %prep
 %setup -q
 
@@ -69,6 +90,10 @@ Analizator składniowy plików zapytań tree-sittera dla Neovima.
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcppflags} %{rpmcflags}" \
 	LDFLAGS="%{rpmldflags}"
+
+%if %{with python3}
+%py3_build
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -87,6 +112,12 @@ install -d $RPM_BUILD_ROOT%{_libdir}/nvim/parser
 
 # redundant symlink
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libtree-sitter-query.so.15
+
+%if %{with python3}
+%py3_install
+
+%{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/tree_sitter_query/*.c
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -116,3 +147,16 @@ rm -rf $RPM_BUILD_ROOT
 %files -n neovim-parser-query
 %defattr(644,root,root,755)
 %{_libdir}/nvim/parser/query.so
+
+%if %{with python3}
+%files -n python3-tree-sitter-query
+%defattr(644,root,root,755)
+%dir %{py3_sitedir}/tree_sitter_query
+%{py3_sitedir}/tree_sitter_query/_binding.abi3.so
+%{py3_sitedir}/tree_sitter_query/__init__.py
+%{py3_sitedir}/tree_sitter_query/__init__.pyi
+%{py3_sitedir}/tree_sitter_query/py.typed
+%{py3_sitedir}/tree_sitter_query/__pycache__
+%{py3_sitedir}/tree_sitter_query/queries
+%{py3_sitedir}/tree_sitter_query-%{version}-py*.egg-info
+%endif
