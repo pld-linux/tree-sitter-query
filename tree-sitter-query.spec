@@ -17,8 +17,9 @@ URL:		https://github.com/tree-sitter-grammars/tree-sitter-query
 BuildRequires:	gcc >= 6:4.7
 %if %{with python3}
 BuildRequires:	python3-devel >= 1:3.10
-BuildRequires:	python3-setuptools
+BuildRequires:	python3-setuptools >= 1:42
 BuildRequires:	python3-wheel
+BuildRequires:	rpmbuild(macros) >= 1.714
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -70,7 +71,7 @@ Analizator składniowy plików zapytań tree-sittera dla Neovima.
 Summary:	Tree-sitter query files parser for Python
 Summary(pl.UTF-8):	Analizator składni plików zapytań tree-sittera dla Pythona
 Group:		Libraries/Python
-Requires:	python3-tree-sitter >= 0.24
+Requires:	python3-tree-sitter >= 0.25
 
 %description -n python3-tree-sitter-query
 Tree-sitter query files parser for Python.
